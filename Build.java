@@ -622,13 +622,13 @@ class CardTableBuild extends CardTable
    // private JRadioButton[] rb;
    public ButtonGroup cardSelected;
 
-   private Build gamedata;
+   private CardGameBuild gamedata = new CardGameBuild();
 
    public JButton leftPileBtn;
    public JButton rightPileBtn;
    public JButton playerPassBtn;
 
-   public CardTableBuild(Build gamedata) {
+   public CardTableBuild(CardGameBuild gamedata) {
       super("Build Card Game", gamedata.getNumCards(),
                gamedata.getNumPlayers());
       this.gamedata = gamedata;
@@ -1056,7 +1056,7 @@ class Card
     while (flag)
        {
           flag = false;    //set flag to false awaiting a possible swap
-          for (int i = 0; i < arraySize; i++)
+          for (int i = 0; i < arraySize-1; i++)
           {
              if (cards[i].isGreater(cards[i + 1]))
              {
@@ -1190,16 +1190,67 @@ class Hand
 //END Hand class
 
 //CardController 
-class CardController implements ActionListener 
+class CardController extends JFrame implements ActionListener
 {
 
- private CardGameBuild aModel;
- private CardTableBuild aView;
+   private CardGameBuild aModel;
+   private CardTableBuild aView;
 
- CardController(CardGameBuild theModel, CardTableBuild theView) {
 
-    this.aModel = theModel;
-    this.aView = theView;
+   @Override
+   public void actionPerformed(ActionEvent arg0) 
+   {
+   // TODO Auto-generated method stub
+     int cardIndex;
+     Card cardToPlay;
+   
+     switch (arg0.getActionCommand()) {
+     case "getLeftSideCard":
+        cardIndex = Integer.parseInt(
+                 aView.cardSelected.getSelection().getActionCommand());
+        cardToPlay = aModel.playerHand.inspectCard(cardIndex);
+        if (aModel.playableCard(aModel.getLeftSideCard(), cardToPlay)) {
+           aModel.playCardOnLeft(aModel.cardFramework.playCard(1, cardIndex));
+           aModel.cardFramework.takeCard(1);
+           aModel.computerChoosesAPlay();
+        } else {
+           JOptionPane.showMessageDialog(null,
+                    "You cannot place this card here", "Bad Play",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+   
+        aView.updateTable();
+        break; // Don't allow to flow to next case statement.
+     case "getRightSideCard":
+        cardIndex = Integer.parseInt(
+                 aView.cardSelected.getSelection().getActionCommand());
+        cardToPlay = aModel.playerHand.inspectCard(cardIndex);
+        if (aModel.playableCard(aModel.getRghtSideCard(), cardToPlay)) {
+           aModel.playCardOnRight(aModel.cardFramework.playCard(1, cardIndex));
+           aModel.cardFramework.takeCard(1);
+           aModel.computerChoosesAPlay();
+        } else {
+           JOptionPane.showMessageDialog(null,
+                    "You cannot place this card here", "Bad Play",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+   
+        aView.updateTable();
+        break; // Don't allow to flow to next case statement.
+   
+     case "Pass Turn":
+        aModel.playerPasses();
+        aView.updateTable();
+        break;
+     }
+   
+      }
+
+   CardController(CardGameBuild theModel, CardTableBuild theView) {
+
+      this.aModel = theModel;
+      this.aView = theView;
+   }
 }
 //END of CardController
 
@@ -1294,56 +1345,8 @@ private class TimerClass extends Thread
       }
    }
 }
+
+
 }
-
-@Override
-public void actionPerformed(ActionEvent arg0) 
-{
-// TODO Auto-generated method stub
-  int cardIndex;
-  Card cardToPlay;
-
-  switch (arg0.getActionCommand()) {
-  case "getLeftSideCard":
-     cardIndex = Integer.parseInt(
-              aView.cardSelected.getSelection().getActionCommand());
-     cardToPlay = aModel.playerHand.inspectCard(cardIndex);
-     if (aModel.playableCard(aModel.getLeftSideCard(), cardToPlay)) {
-        aModel.playCardOnLeft(aModel.cardFramework.playCard(1, cardIndex));
-        aModel.cardFramework.takeCard(1);
-        aModel.computerChoosesAPlay();
-     } else {
-        JOptionPane.showMessageDialog(null,
-                 "You cannot place this card here", "Bad Play",
-                 JOptionPane.INFORMATION_MESSAGE);
-     }
-
-     aView.updateTable();
-     break; // Don't allow to flow to next case statement.
-  case "getRightSideCard":
-     cardIndex = Integer.parseInt(
-              aView.cardSelected.getSelection().getActionCommand());
-     cardToPlay = aModel.playerHand.inspectCard(cardIndex);
-     if (aModel.playableCard(aModel.getRghtSideCard(), cardToPlay)) {
-        aModel.playCardOnRight(aModel.cardFramework.playCard(1, cardIndex));
-        aModel.cardFramework.takeCard(1);
-        aModel.computerChoosesAPlay();
-     } else {
-        JOptionPane.showMessageDialog(null,
-                 "You cannot place this card here", "Bad Play",
-                 JOptionPane.INFORMATION_MESSAGE);
-     }
-
-     aView.updateTable();
-     break; // Don't allow to flow to next case statement.
-
-  case "Pass Turn":
-     aModel.playerPasses();
-     aView.updateTable();
-     break;
-  }
-}
-}
-
 
 //END class Clock-------------------------------------------------------------------
