@@ -68,7 +68,8 @@ public class Build
 	   
 	   
 	   
-      CardTable newCardTable = new CardTable("CardTable", NUM_CARDS_PER_HAND, NUM_PLAYERS);
+      CardGameBuild gameData = new CardGameBuild();
+      CardTable newCardTable = new CardTableBuild(gameData); //("CardTable", NUM_CARDS_PER_HAND, NUM_PLAYERS);
       newCardTable.setSize(900,800);
       newCardTable.setLocationRelativeTo(null);
       newCardTable.setLayout(new GridLayout(3,1));
@@ -736,7 +737,7 @@ class CardTableBuild extends CardTable
       
       Clock clock = new Clock();
       JPanel clockPnl = new JPanel();
-      clockPnl.add(clock.timerPanel);
+      //clockPnl.add(clock.timerPanel);
       centerPanel.add(clockPnl, BorderLayout.PAGE_START);
       centerPanel.add(clock.startStopButton, BorderLayout.CENTER);
       playerPassBtn = new JButton("Pass Turn");
